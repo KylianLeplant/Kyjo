@@ -23,6 +23,18 @@ func TestCardGridState(t *testing.T) {
 	}
 }
 
+func TestCardGridStateReturnsCopies(t *testing.T) {
+	grid := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+	values, discovered := grid.GetGridState()
+	values[0][0] = 99
+	discovered[0][0] = true
+
+	values, discovered = grid.GetGridState()
+	if values[0][0] != 13 || discovered[0][0] {
+		t.Fatal("GetGridState() returned references to the grid state")
+	}
+}
+
 func TestCardGridReplaceCard(t *testing.T) {
 	grid := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
 

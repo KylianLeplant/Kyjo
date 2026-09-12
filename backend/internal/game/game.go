@@ -7,6 +7,9 @@ type Game struct {
 }
 
 func NewGame(nbPlayers int) *Game {
+	if nbPlayers < 2 || nbPlayers > 8 {
+		panic("invalid number of players")
+	}
 	game := &Game{
 		deck:    NewDeck(),
 		discard: NewDiscard(),

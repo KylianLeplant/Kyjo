@@ -70,3 +70,15 @@ func TestEmptyDeck(t *testing.T) {
 		t.Fatalf("DrawCard() on an empty deck returned %d, want 13", card)
 	}
 }
+
+func TestDeckDrawCardsNotEnoughCards(t *testing.T) {
+	deck := &Deck{cards: []int{1, 2}}
+
+	cards := deck.DrawCards(3)
+	if cards != nil {
+		t.Fatalf("DrawCards(3) returned %v, want nil", cards)
+	}
+	if got := deck.getNbCards(); got != 2 {
+		t.Fatalf("deck contains %d cards after a failed draw, want 2", got)
+	}
+}

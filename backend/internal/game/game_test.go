@@ -24,3 +24,31 @@ func TestNewGame(t *testing.T) {
 		}
 	}
 }
+
+func TestNewGameWithoutPlayers(t *testing.T) {
+	game := NewGame(0)
+
+	if len(game.grids) != 0 {
+		t.Fatalf("game has %d grids, want 0", len(game.grids))
+	}
+	if game.deck == nil {
+		t.Fatal("game deck is nil")
+	}
+	if game.discard == nil {
+		t.Fatal("game discard pile is nil")
+	}
+}
+
+func TestGameAccessors(t *testing.T) {
+	game := NewGame(1)
+
+	if game.grids[0] == nil {
+		t.Fatal("player 0 grid is nil")
+	}
+	if game.deck == nil {
+		t.Fatal("game deck is nil")
+	}
+	if game.discard == nil {
+		t.Fatal("game discard pile is nil")
+	}
+}

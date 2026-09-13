@@ -13,7 +13,13 @@ type CardGrid struct {
 }
 
 // NewCardGrid creates a card grid from a flat list of values.
-func NewCardGrid(values []int, nbCol int, nbRow int) *CardGrid {
+func NewCardGrid(values []int, nbCol int, nbRow int) (*CardGrid, error) {
+	if len(values) != nbCol*nbRow {
+		return nil, fmt.Errorf("number of values does not match grid dimensions")
+	}
+	if nbCol <= 0 || nbRow <= 0 {
+		return nil, fmt.Errorf("grid dimensions must be positive")
+	}
 	grid := &CardGrid{
 		values:     make([][]int, nbCol),
 		discovered: make([][]bool, nbCol),
@@ -28,7 +34,7 @@ func NewCardGrid(values []int, nbCol int, nbRow int) *CardGrid {
 			grid.discovered[i][j] = false
 		}
 	}
-	return grid
+	return grid, nil
 }
 
 // GetGridState returns visible values and discovery flags as independent copies.

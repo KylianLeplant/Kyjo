@@ -16,7 +16,11 @@ func NewGame(nbPlayers int) *Game {
 		grids:   make([]*CardGrid, nbPlayers),
 	}
 	for i := 0; i < nbPlayers; i++ {
-		game.grids[i] = NewCardGrid(game.deck.DrawCards(12), 4, 3)
+		err := error(nil)
+		game.grids[i], err = NewCardGrid(game.deck.DrawCards(12), 4, 3)
+		if err != nil {
+			panic(err)
+		}
 	}
 	return game
 }

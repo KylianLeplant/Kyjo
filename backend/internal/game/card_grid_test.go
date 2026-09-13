@@ -3,7 +3,10 @@ package game
 import "testing"
 
 func TestCardGridState(t *testing.T) {
-	grid := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+	grid, err := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	values, discovered := grid.GetGridState()
 	if values[0][0] != 13 || discovered[0][0] {
@@ -26,7 +29,10 @@ func TestCardGridState(t *testing.T) {
 }
 
 func TestCardGridStateReturnsCopies(t *testing.T) {
-	grid := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+	grid, err := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
 	values, discovered := grid.GetGridState()
 	values[0][0] = 99
 	discovered[0][0] = true
@@ -38,8 +44,10 @@ func TestCardGridStateReturnsCopies(t *testing.T) {
 }
 
 func TestCardGridReplaceCard(t *testing.T) {
-	grid := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
-
+	grid, err := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if err := grid.ReplaceCard(1, 0, 9); err != nil {
 		t.Fatal(err)
 	}
@@ -63,7 +71,10 @@ func TestCardGridDiscoverRejectsInvalidIndices(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			grid := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+			grid, err := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+			if err != nil {
+				t.Fatal(err)
+			}
 			if _, err := grid.Discover(test.x, test.y); err == nil {
 				t.Fatal("expected an error")
 			}
@@ -85,7 +96,10 @@ func TestCardGridReplaceCardRejectsInvalidIndices(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			grid := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+			grid,err := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+			if err != nil {
+				t.Fatal(err)
+			}
 			if err := grid.ReplaceCard(test.x, test.y, 9); err == nil {
 				t.Fatal("expected an error")
 			}
@@ -94,7 +108,10 @@ func TestCardGridReplaceCardRejectsInvalidIndices(t *testing.T) {
 }
 
 func TestCardGridDiscoverAll(t *testing.T) {
-	grid := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+	grid, err := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
 	grid.DiscoverAll()
 
 	values, discovered := grid.GetGridState()
@@ -108,7 +125,10 @@ func TestCardGridDiscoverAll(t *testing.T) {
 }
 
 func TestCardGridDeleteColumn(t *testing.T) {
-	grid := NewCardGrid([]int{1, 2, 3, 4, 5, 6, 7, 8}, 4, 2)
+	grid, err := NewCardGrid([]int{1, 2, 3, 4, 5, 6, 7, 8}, 4, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if err := grid.ReplaceCard(0, 1, 1); err != nil {
 		t.Fatal(err)
 	}

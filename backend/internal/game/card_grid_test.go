@@ -10,10 +10,12 @@ func TestCardGridState(t *testing.T) {
 		t.Fatal("new cards should be hidden")
 	}
 
-	if !grid.Discover(0, 1) {
+	revealed, err := grid.Discover(0, 1)
+	if err != nil || !revealed {
 		t.Fatal("Discover() should reveal a hidden card")
 	}
-	if grid.Discover(0, 1) {
+	revealed, err = grid.Discover(0, 1)
+	if err != nil || revealed {
 		t.Fatal("Discover() should not reveal an already discovered card")
 	}
 
@@ -38,10 +40,56 @@ func TestCardGridStateReturnsCopies(t *testing.T) {
 func TestCardGridReplaceCard(t *testing.T) {
 	grid := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
 
-	grid.ReplaceCard(1, 0, 9)
+	if err := grid.ReplaceCard(1, 0, 9); err != nil {
+		t.Fatal(err)
+	}
 	values, discovered := grid.GetGridState()
 	if values[1][0] != 9 || !discovered[1][0] {
 		t.Fatalf("replaced card state is (%d, %t), want (9, true)", values[1][0], discovered[1][0])
+	}
+}
+
+func TestCardGridDiscoverRejectsInvalidIndices(t *testing.T) {
+	tests := []struct {
+		name string
+		x    int
+		y    int
+	}{
+		{name: "negative column", x: -1, y: 0},
+		{name: "column too large", x: 2, y: 0},
+		{name: "negative row", x: 0, y: -1},
+		{name: "row too large", x: 0, y: 2},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			grid := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+			if _, err := grid.Discover(test.x, test.y); err == nil {
+				t.Fatal("expected an error")
+			}
+		})
+	}
+}
+
+func TestCardGridReplaceCardRejectsInvalidIndices(t *testing.T) {
+	tests := []struct {
+		name string
+		x    int
+		y    int
+	}{
+		{name: "negative column", x: -1, y: 0},
+		{name: "column too large", x: 2, y: 0},
+		{name: "negative row", x: 0, y: -1},
+		{name: "row too large", x: 0, y: 2},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			grid := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+			if err := grid.ReplaceCard(test.x, test.y, 9); err == nil {
+				t.Fatal("expected an error")
+			}
+		})
 	}
 }
 
@@ -61,29 +109,45 @@ func TestCardGridDiscoverAll(t *testing.T) {
 
 func TestCardGridDeleteColumn(t *testing.T) {
 	grid := NewCardGrid([]int{1, 2, 3, 4, 5, 6, 7, 8}, 4, 2)
-	grid.ReplaceCard(0, 1, 1)
+	if err := grid.ReplaceCard(0, 1, 1); err != nil {
+		t.Fatal(err)
+	}
 	if grid.nbCol == 3 {
 		t.Fatalf("deletion not expected if all cards are not discovered")
 	}
-	grid.Discover(0, 0)
+	if _, err := grid.Discover(0, 0); err != nil {
+		t.Fatal(err)
+	}
 	if grid.nbCol != 3 {
 		t.Fatalf("deletion expected after discovering the last card of a column if they are the same %d", grid.nbCol)
 	}
 
-	grid.Discover(0, 0)
-	grid.ReplaceCard(0, 1, 3)
+	if _, err := grid.Discover(0, 0); err != nil {
+		t.Fatal(err)
+	}
+	if err := grid.ReplaceCard(0, 1, 3); err != nil {
+		t.Fatal(err)
+	}
 	if grid.nbCol != 2 {
 		t.Fatalf("deletion expected after replacing the last card of a column if they are the same")
 	}
 
-	grid.Discover(0, 0)
-	grid.ReplaceCard(0, 1, 3)
+	if _, err := grid.Discover(0, 0); err != nil {
+		t.Fatal(err)
+	}
+	if err := grid.ReplaceCard(0, 1, 3); err != nil {
+		t.Fatal(err)
+	}
 	if grid.nbCol == 1 {
 		t.Fatalf("deletion not expected when we replace the last card of a column if all cards of the column are not the same")
 	}
 
-	grid.ReplaceCard(1, 1, 3)
-	grid.Discover(1, 0)
+	if err := grid.ReplaceCard(1, 1, 3); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := grid.Discover(1, 0); err != nil {
+		t.Fatal(err)
+	}
 	if grid.nbCol == 1 {
 		t.Fatalf("deletion not expected when we discover the last card of a column if all cards of the column are not the same")
 	}

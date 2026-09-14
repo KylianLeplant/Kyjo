@@ -5,6 +5,8 @@ import (
 	"io"
 )
 
+type TurnPhase int
+
 const (
 	MinPlayerCount = 2
 	MaxPlayerCount = 8
@@ -12,15 +14,27 @@ const (
 	CardGridHeight = 3
 )
 
+const (
+	PhaseReady TurnPhase = iota
+	PhaseAwaitingDrawDecision
+	PhaseAwaitingReveal
+)
+
 func isValidPlayerCount(count int) bool {
 	return count >= MinPlayerCount && count <= MaxPlayerCount
 }
 
+type pendingTurn struct {
+	playerIndex int
+	drawnCard   int
+	phase       TurnPhase
+}
+
 type Game struct {
-	deck          *deck
-	discard       *discardPile
-	grids         []*cardGrid
-	currentPlayer int
+	deck        *deck
+	discard     *discardPile
+	grids       []*cardGrid
+	pendingTurn *pendingTurn
 }
 
 func NewGame(nbPlayers int) (*Game, error) {
@@ -53,7 +67,11 @@ func NewGame(nbPlayers int) (*Game, error) {
 		return nil, err
 	}
 
-	game.currentPlayer = 0
+	game.pendingTurn = &pendingTurn{
+		playerIndex: 0,
+		phase:       PhaseReady,
+		drawnCard:   HiddenCardValue,
+	}
 	return game, nil
 }
 
@@ -64,30 +82,6 @@ func (g *Game) GetGridState(playerIndex int) ([][]int, [][]bool, error) {
 	}
 	values, discovered := grid.getGridState()
 	return values, discovered, nil
-}
-
-// Discover reveals a card for the specified player.
-func (g *Game) Discover(playerIndex, x, y int) (bool, error) {
-	if playerIndex != g.currentPlayer {
-		return false, fmt.Errorf("it's not player %d's turn", playerIndex)
-	}
-	grid, err := g.gridForPlayer(playerIndex)
-	if err != nil {
-		return false, err
-	}
-	return grid.discoverCard(x, y)
-}
-
-// ReplaceCard replaces a card for the specified player.
-func (g *Game) ReplaceCard(playerIndex, x, y, newValue int) error {
-	if playerIndex != g.currentPlayer {
-		return fmt.Errorf("it's not player %d's turn", playerIndex)
-	}
-	grid, err := g.gridForPlayer(playerIndex)
-	if err != nil {
-		return err
-	}
-	return grid.replaceCard(x, y, newValue)
 }
 
 func (g *Game) PrintGrid(w io.Writer, playerIndex int) error {
@@ -114,4 +108,104 @@ func (g *Game) gridForPlayer(playerIndex int) (*cardGrid, error) {
 		return nil, fmt.Errorf("invalid player index: %d", playerIndex)
 	}
 	return g.grids[playerIndex], nil
+}
+
+func (g *Game) GetCurrentPlayer() int {
+	return g.pendingTurn.playerIndex
+}
+
+func (g *Game) nextTurn() {
+	g.pendingTurn = &pendingTurn{
+		playerIndex: (g.pendingTurn.playerIndex + 1) % len(g.grids),
+		phase:       PhaseReady,
+		drawnCard:   HiddenCardValue,
+	}
+}
+
+func (g *Game) GetDiscardTopCard() (int, error) {
+	return g.discard.getTopCard()
+}
+
+func (g *Game) DrawCard(player int) (int, error) {
+	if g.pendingTurn == nil {
+		return HiddenCardValue, fmt.Errorf("no pending turn")
+	}
+	if player != g.pendingTurn.playerIndex {
+		return HiddenCardValue, fmt.Errorf("it's not player %d's turn", player)
+	}
+	if g.pendingTurn.phase != PhaseReady {
+		return HiddenCardValue, fmt.Errorf("not in the right phase to draw a card")
+	}
+	card, err := g.deck.drawCard()
+	if err != nil {
+		return HiddenCardValue, err
+	}
+	g.pendingTurn = &pendingTurn{
+		playerIndex: player,
+		drawnCard:   card,
+		phase:       PhaseAwaitingDrawDecision,
+	}
+	return card, nil
+}
+
+func (g *Game) DiscardCard(player int) error {
+	if g.pendingTurn == nil {
+		return fmt.Errorf("Error : no pending turn")
+	}
+	if player != g.pendingTurn.playerIndex {
+		return fmt.Errorf("it's not player %d's turn", player)
+	}
+	if g.pendingTurn.phase != PhaseAwaitingDrawDecision {
+		return fmt.Errorf("Error : not in the right phase to discard")
+	}
+	err := g.discard.addCard(g.pendingTurn.drawnCard)
+	if err != nil {
+		return err
+	}
+	g.pendingTurn.phase = PhaseAwaitingReveal
+	return nil
+}
+
+func (g *Game) ReplaceCard(player int, x int, y int) error {
+	if g.pendingTurn == nil {
+		return fmt.Errorf("Error : no pending turn")
+	}
+	if player != g.pendingTurn.playerIndex {
+		return fmt.Errorf("it's not player %d's turn", player)
+	}
+	if g.pendingTurn.phase != PhaseAwaitingDrawDecision {
+		return fmt.Errorf("Error : not in the right phase to replace the card.")
+	}
+	grid, err := g.gridForPlayer(player)
+	if err != nil {
+		return err
+	}
+	err = grid.replaceCard(x, y, g.pendingTurn.drawnCard)
+	if err != nil {
+		return err
+	}
+	g.nextTurn()
+	return nil
+}
+
+func (g *Game) RevealCard(player int, x int, y int) (bool, error) {
+	if g.pendingTurn == nil {
+		return false, fmt.Errorf("Error : no pending turn")
+	}
+	if player != g.pendingTurn.playerIndex {
+		return false, fmt.Errorf("it's not player %d's turn", player)
+	}
+	if g.pendingTurn.phase != PhaseAwaitingReveal {
+		return false, fmt.Errorf("Error : not in the right phase to reveal a card.")
+	}
+	grid, err := g.gridForPlayer(player)
+	if err != nil {
+		return false, err
+	}
+	match, err := grid.discoverCard(x, y)
+	if err != nil {
+		return false, err
+	}
+	g.nextTurn()
+	return match, nil
 }

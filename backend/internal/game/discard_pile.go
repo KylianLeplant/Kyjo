@@ -34,3 +34,10 @@ func (d *DiscardPile) TakeAllCards() []int {
 	d.cards = []int{}
 	return cards
 }
+
+func (d *DiscardPile) GetTopCard() (int, error) {
+	if d.IsEmpty() {
+		return 13, fmt.Errorf("discard pile is empty")
+	}
+	return d.cards[len(d.cards)-1], nil
+}

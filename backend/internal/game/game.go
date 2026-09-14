@@ -6,6 +6,7 @@ type Game struct {
 	deck    *Deck
 	discard *DiscardPile
 	grids   []*CardGrid
+	currentPlayer int
 }
 
 func NewGame(nbPlayers int) (*Game, error) {
@@ -27,6 +28,12 @@ func NewGame(nbPlayers int) (*Game, error) {
 			return nil, err
 		}
 	}
+	card, err := game.deck.DrawCard()
+	if err != nil {
+		return nil, err
+	}
+	game.discard.AddCard(card)
+	game.currentPlayer = 0
 	return game, nil
 }
 

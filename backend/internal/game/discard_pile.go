@@ -12,8 +12,12 @@ func NewDiscard() *DiscardPile {
 	}
 }
 
-func (d *DiscardPile) AddCard(card int) {
+func (d *DiscardPile) AddCard(card int)  error {
+	if card < -2 || card > 12 {
+		return fmt.Errorf("invalid card value: %d (must be between -2 and 12)", card)
+	}
 	d.cards = append(d.cards, card)
+	return nil
 }
 
 func (d *DiscardPile) IsEmpty() bool {

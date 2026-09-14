@@ -3,9 +3,9 @@ package game
 import "fmt"
 
 type Game struct {
-	deck    *Deck
-	discard *DiscardPile
-	grids   []*CardGrid
+	deck          *Deck
+	discard       *DiscardPile
+	grids         []*CardGrid
 	currentPlayer int
 }
 
@@ -37,11 +37,18 @@ func NewGame(nbPlayers int) (*Game, error) {
 	return game, nil
 }
 
-func (g *Game) GetGridState(playerIndex int) ([][]int, [][]bool) {
-	return g.grids[playerIndex].GetGridState()
+func (g *Game) GetGridState(playerIndex int) ([][]int, [][]bool, error) {
+	if playerIndex < 0 || playerIndex >= len(g.grids) {
+		return nil, nil, fmt.Errorf("invalid player index: %d", playerIndex)
+	}
+	values, discovered := g.grids[playerIndex].GetGridState()
+	return values, discovered, nil
 }
 
-func (g *Game) PrintGrid(playerIndex int) {
+func (g *Game) PrintGrid(playerIndex int) error {
+	if playerIndex < 0 || playerIndex >= len(g.grids) {
+		return fmt.Errorf("invalid player index: %d", playerIndex)
+	}
 	values, _ := g.grids[playerIndex].GetGridState()
 	for i := 0; i < len(values); i++ {
 		for j := 0; j < len(values[i]); j++ {
@@ -49,4 +56,5 @@ func (g *Game) PrintGrid(playerIndex int) {
 		}
 		println()
 	}
+	return nil
 }

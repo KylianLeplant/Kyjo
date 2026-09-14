@@ -16,7 +16,10 @@ func TestNewGame(t *testing.T) {
 	}
 
 	for player := range game.grids {
-		values, discovered := game.GetGridState(player)
+		values, discovered, err := game.GetGridState(player)
+		if err != nil {
+			t.Fatalf("GetGridState(%d) returned an unexpected error: %v", player, err)
+		}
 		if len(values) != 4 || len(discovered) != 4 {
 			t.Fatalf("player %d grid has an unexpected number of columns", player)
 		}

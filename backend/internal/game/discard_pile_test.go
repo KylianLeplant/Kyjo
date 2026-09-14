@@ -9,8 +9,14 @@ func TestDiscardPile(t *testing.T) {
 		t.Fatalf("TakeTopCard() on an empty pile returned %d, want 13 and an error", card)
 	}
 
-	discard.AddCard(7)
-	discard.AddCard(3)
+	err := discard.AddCard(7)
+	if err != nil {
+		t.Fatalf("AddCard(7) returned an unexpected error: %v", err)
+	}
+	err = discard.AddCard(3)
+	if err != nil {
+		t.Fatalf("AddCard(3) returned an unexpected error: %v", err)
+	}
 	card, err := discard.TakeTopCard();
 	if card != 7 {
 		t.Fatalf("first discarded card is %d, want 7", card)

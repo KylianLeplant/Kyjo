@@ -76,6 +76,9 @@ func (cg *CardGrid) Discover(x int, y int) (bool, error) {
 // ReplaceCard changes a card value and marks the card as discovered.
 // If the column forms a match after the replacement, it is removed.
 func (cg *CardGrid) ReplaceCard(x int, y int, newValue int) error {
+	if newValue < -2 || newValue > 12 {
+		return fmt.Errorf("invalid card value: %d (must be between -2 and 12)", newValue)
+	}
 	if x < 0 || x >= len(cg.values) || y < 0 || y >= len(cg.values[x]) {
 		return fmt.Errorf("invalid card position (%d, %d)", x, y)
 	}

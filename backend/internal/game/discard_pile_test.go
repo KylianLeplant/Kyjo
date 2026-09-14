@@ -4,7 +4,7 @@ import "testing"
 
 func TestDiscardPile(t *testing.T) {
 	discard := NewDiscard()
-	card, err := discard.TakeTopCard();
+	card, err := discard.TakeTopCard()
 	if card != 13 {
 		t.Fatalf("TakeTopCard() on an empty pile returned %d, want 13", card)
 	}
@@ -12,6 +12,7 @@ func TestDiscardPile(t *testing.T) {
 		t.Fatalf("TakeTopCard() on an empty pile returned no error")
 	}
 
+	//ajout de cartes
 	err = discard.AddCard(7)
 	if err != nil {
 		t.Fatalf("AddCard(7) returned an unexpected error: %v", err)
@@ -20,16 +21,18 @@ func TestDiscardPile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("AddCard(3) returned an unexpected error: %v", err)
 	}
-	card, err = discard.TakeTopCard();
-	if card != 7 {
-		t.Fatalf("first discarded card is %d, want 7", card)
+
+	//récupération de la carte du dessus
+	card, err = discard.TakeTopCard()
+	if card != 3 {
+		t.Fatalf("first discarded card is %d, want 3", card)
 	}
 	if err != nil {
 		t.Fatalf("TakeTopCard() returned an unexpected error: %v", err)
 	}
-	card, err = discard.TakeTopCard();
-	if card != 3 {
-		t.Fatalf("second discarded card is %d, want 3", card)
+	card, err = discard.TakeTopCard()
+	if card != 7 {
+		t.Fatalf("second discarded card is %d, want 7", card)
 	}
 	if err != nil {
 		t.Fatalf("TakeTopCard() returned an unexpected error: %v", err)

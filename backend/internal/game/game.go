@@ -28,11 +28,17 @@ func NewGame(nbPlayers int) (*Game, error) {
 			return nil, err
 		}
 	}
+	
 	card, err := game.deck.DrawCard()
 	if err != nil {
 		return nil, err
 	}
-	game.discard.AddCard(card)
+
+	err = game.discard.AddCard(card)
+	if err != nil {
+		return nil, err
+	}
+
 	game.currentPlayer = 0
 	return game, nil
 }

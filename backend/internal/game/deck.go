@@ -48,6 +48,9 @@ func (d *Deck) DrawCards(n int) ([]int, error) {
 	if n > len(d.cards) {
 		return nil, fmt.Errorf("not enough cards to draw: have %d, want %d", len(d.cards), n)
 	}
+	if n <= 0 {
+		return nil, fmt.Errorf("number of cards to draw must be positive: got %d", n)
+	}
 	drawnCards := d.cards[:n]
 	d.cards = d.cards[n:]
 	return drawnCards, nil

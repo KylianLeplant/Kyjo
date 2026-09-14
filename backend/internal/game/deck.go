@@ -1,8 +1,8 @@
 package game
 
 import (
-	"math/rand"
 	"fmt"
+	"math/rand"
 )
 
 type Deck struct {
@@ -59,4 +59,3 @@ func (d *Deck) DrawCards(n int) ([]int, error) {
 func (d *Deck) getNbCards() int {
 	return len(d.cards)
 }
-

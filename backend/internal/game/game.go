@@ -28,7 +28,7 @@ func NewGame(nbPlayers int) (*Game, error) {
 			return nil, err
 		}
 	}
-	
+
 	card, err := game.deck.DrawCard()
 	if err != nil {
 		return nil, err

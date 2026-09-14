@@ -12,7 +12,7 @@ func NewDiscard() *DiscardPile {
 	}
 }
 
-func (d *DiscardPile) AddCard(card int)  error {
+func (d *DiscardPile) AddCard(card int) error {
 	if card < -2 || card > 12 {
 		return fmt.Errorf("invalid card value: %d (must be between -2 and 12)", card)
 	}
@@ -25,8 +25,8 @@ func (d *DiscardPile) IsEmpty() bool {
 }
 
 func (d *DiscardPile) TakeTopCard() (int, error) {
-	if d.IsEmpty(){
-		return 13, fmt.Errorf("discard pile is empty")	
+	if d.IsEmpty() {
+		return 13, fmt.Errorf("discard pile is empty")
 	}
 	card := d.cards[len(d.cards)-1]
 	d.cards = d.cards[:len(d.cards)-1]

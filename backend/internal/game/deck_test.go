@@ -71,7 +71,7 @@ func TestDeckDrawCards(t *testing.T) {
 
 func TestEmptyDeck(t *testing.T) {
 	deck := &Deck{}
-	
+
 	if card, err := deck.DrawCard(); card != 13 || err == nil {
 		t.Fatalf("DrawCard() on an empty deck returned %d, want 13 and an error", card)
 	}

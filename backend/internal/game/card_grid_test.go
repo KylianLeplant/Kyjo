@@ -96,7 +96,7 @@ func TestCardGridReplaceCardRejectsInvalidIndices(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			grid,err := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+			grid, err := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
 			if err != nil {
 				t.Fatal(err)
 			}

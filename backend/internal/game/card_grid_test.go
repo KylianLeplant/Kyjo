@@ -9,7 +9,7 @@ func TestCardGridState(t *testing.T) {
 	}
 
 	values, discovered := grid.GetGridState()
-	if values[0][0] != 13 || discovered[0][0] {
+	if values[0][0] != HiddenCardValue || discovered[0][0] {
 		t.Fatal("new cards should be hidden")
 	}
 
@@ -38,7 +38,7 @@ func TestCardGridStateReturnsCopies(t *testing.T) {
 	discovered[0][0] = true
 
 	values, discovered = grid.GetGridState()
-	if values[0][0] != 13 || discovered[0][0] {
+	if values[0][0] != HiddenCardValue || discovered[0][0] {
 		t.Fatal("GetGridState() returned references to the grid state")
 	}
 }

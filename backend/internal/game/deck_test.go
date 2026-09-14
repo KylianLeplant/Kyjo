@@ -14,11 +14,22 @@ func TestNewDeck(t *testing.T) {
 		counts[card]++
 	}
 
-	expectedCounts := map[int]int{-2: 5, 0: 15}
-	for card := -1; card <= 12; card++ {
-		if card != 0 {
-			expectedCounts[card] = 10
-		}
+	expectedCounts := map[int]int{
+		-2: 5,
+		-1: 10,
+		0:  15,
+		1:  10,
+		2:  10,
+		3:  10,
+		4:  10,
+		5:  10,
+		6:  10,
+		7:  10,
+		8:  10,
+		9:  10,
+		10: 10,
+		11: 10,
+		12: 10,
 	}
 
 	for card, want := range expectedCounts {
@@ -32,13 +43,13 @@ func TestDeckDrawCard(t *testing.T) {
 	deck := NewDeck()
 
 	card, err := deck.DrawCard()
-	if card == 13 {
+	if card == HiddenCardValue {
 		t.Fatal("DrawCard() returned the empty-deck value")
 	}
 	if err != nil {
 		t.Fatalf("DrawCard() returned an error: %v", err)
 	}
-	if card < -2 || card > 12 {
+	if card < MinCardValue|| card > MaxCardValue {
 		t.Fatalf("DrawCard() returned an invalid card value: %d", card)
 	}
 	if got := deck.getNbCards(); got != 149 {
@@ -57,10 +68,10 @@ func TestDeckDrawCards(t *testing.T) {
 		t.Fatalf("DrawCards(12) returned %d cards, want 12", len(cards))
 	}
 	for _, card := range cards {
-		if card == 13 {
+		if card == HiddenCardValue {
 			t.Fatal("DrawCards() returned the empty-deck value")
 		}
-		if card < -2 || card > 12 {
+		if card < MinCardValue || card > MaxCardValue {
 			t.Fatalf("DrawCards() returned an invalid card value: %d", card)
 		}
 	}
@@ -72,8 +83,8 @@ func TestDeckDrawCards(t *testing.T) {
 func TestEmptyDeck(t *testing.T) {
 	deck := &Deck{}
 
-	if card, err := deck.DrawCard(); card != 13 || err == nil {
-		t.Fatalf("DrawCard() on an empty deck returned %d, want 13 and an error", card)
+	if card, err := deck.DrawCard(); card != HiddenCardValue || err == nil {
+		t.Fatalf("DrawCard() on an empty deck returned %d, want %d and an error", card, HiddenCardValue)
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 	"math/rand"
 )
 
+
 type Deck struct {
 	cards []int
 }
@@ -13,16 +14,28 @@ func NewDeck() *Deck {
 	deck := &Deck{
 		cards: make([]int, 150),
 	}
-	for i := 0; i < 5; i++ {
-		deck.cards[i] = -2
+	expectedCounts := map[int]int{
+		-2: 5,
+		-1: 10,
+		0:  15,
+		1:  10,
+		2:  10,
+		3:  10,
+		4:  10,
+		5:  10,
+		6:  10,
+		7:  10,
+		8:  10,
+		9:  10,
+		10: 10,
+		11: 10,
+		12: 10,
 	}
-	for i := 5; i < 20; i++ {
-		deck.cards[i] = 0
-	}
-	tab := []int{-1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
-	for i, value := range tab {
-		for j := 0; j < 10; j++ {
-			deck.cards[20+i*10+j] = value
+	index := 0
+	for card, count := range expectedCounts {
+		for j := 0; j < count; j++ {
+			deck.cards[index] = card
+			index++
 		}
 	}
 	rand.Shuffle(len(deck.cards), func(i, j int) {
@@ -33,7 +46,7 @@ func NewDeck() *Deck {
 
 func (d *Deck) DrawCard() (int, error) {
 	if d.IsEmpty() {
-		return 13, fmt.Errorf("deck is empty")
+		return HiddenCardValue, fmt.Errorf("deck is empty")
 	}
 	card := d.cards[0]
 	d.cards = d.cards[1:]

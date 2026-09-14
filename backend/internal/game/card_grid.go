@@ -38,7 +38,7 @@ func NewCardGrid(values []int, nbCol int, nbRow int) (*CardGrid, error) {
 }
 
 // GetGridState returns visible values and discovery flags as independent copies.
-// Hidden cards are represented by the value 13.
+// Hidden cards are represented by the value HiddenCardValue (13).
 func (cg *CardGrid) GetGridState() ([][]int, [][]bool) {
 	valuesCopy := make([][]int, len(cg.values))
 	discoveredCopy := make([][]bool, len(cg.values))
@@ -51,7 +51,7 @@ func (cg *CardGrid) GetGridState() ([][]int, [][]bool) {
 			if cg.discovered[i][j] {
 				valuesCopy[i][j] = cg.values[i][j]
 			} else {
-				valuesCopy[i][j] = 13 // 13 indicates a hidden card
+				valuesCopy[i][j] = HiddenCardValue
 			}
 		}
 	}
@@ -76,8 +76,8 @@ func (cg *CardGrid) Discover(x int, y int) (bool, error) {
 // ReplaceCard changes a card value and marks the card as discovered.
 // If the column forms a match after the replacement, it is removed.
 func (cg *CardGrid) ReplaceCard(x int, y int, newValue int) error {
-	if newValue < -2 || newValue > 12 {
-		return fmt.Errorf("invalid card value: %d (must be between -2 and 12)", newValue)
+	if !isValidCardValue(newValue) {
+		return fmt.Errorf("invalid card value: %d (must be between %d and %d)", newValue, MinCardValue, MaxCardValue)
 	}
 	if x < 0 || x >= len(cg.values) || y < 0 || y >= len(cg.values[x]) {
 		return fmt.Errorf("invalid card position (%d, %d)", x, y)

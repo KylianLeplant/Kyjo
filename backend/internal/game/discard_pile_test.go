@@ -5,8 +5,8 @@ import "testing"
 func TestDiscardPile(t *testing.T) {
 	discard := NewDiscard()
 	card, err := discard.TakeTopCard()
-	if card != 13 {
-		t.Fatalf("TakeTopCard() on an empty pile returned %d, want 13", card)
+	if card != HiddenCardValue {
+		t.Fatalf("TakeTopCard() on an empty pile returned %d, want %d", card, HiddenCardValue)
 	}
 	if err == nil {
 		t.Fatalf("TakeTopCard() on an empty pile returned no error")

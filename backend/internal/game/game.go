@@ -2,6 +2,17 @@ package game
 
 import "fmt"
 
+const (
+	MinPlayerCount		= 2
+	MaxPlayerCount	 	= 8
+	CardGridWidth		= 4
+	CardGridHeight		= 3
+)
+
+func isValidPlayerCount(count int) bool {
+	return count >= MinPlayerCount && count <= MaxPlayerCount
+}
+
 type Game struct {
 	deck          *Deck
 	discard       *DiscardPile
@@ -10,7 +21,7 @@ type Game struct {
 }
 
 func NewGame(nbPlayers int) (*Game, error) {
-	if nbPlayers < 2 || nbPlayers > 8 {
+	if !isValidPlayerCount(nbPlayers) {
 		return nil, fmt.Errorf("invalid number of players: %d (must be between 2 and 8)", nbPlayers)
 	}
 	game := &Game{
@@ -19,11 +30,11 @@ func NewGame(nbPlayers int) (*Game, error) {
 		grids:   make([]*CardGrid, nbPlayers),
 	}
 	for i := 0; i < nbPlayers; i++ {
-		cards, err := game.deck.DrawCards(12)
+		cards, err := game.deck.DrawCards(CardGridWidth * CardGridHeight)
 		if err != nil {
 			return nil, err
 		}
-		game.grids[i], err = NewCardGrid(cards, 4, 3)
+		game.grids[i], err = NewCardGrid(cards, CardGridWidth, CardGridHeight)
 		if err != nil {
 			return nil, err
 		}
@@ -48,7 +59,7 @@ func (g *Game) GetGridState(playerIndex int) ([][]int, [][]bool, error) {
 		return nil, nil, fmt.Errorf("invalid player index: %d", playerIndex)
 	}
 	values, discovered := g.grids[playerIndex].GetGridState()
-	return values, discovered, nil
+	return values, discovered, nil 
 }
 
 func (g *Game) PrintGrid(playerIndex int) error {

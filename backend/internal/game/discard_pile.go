@@ -2,17 +2,17 @@ package game
 
 import "fmt"
 
-type DiscardPile struct {
+type discardPile struct {
 	cards []int
 }
 
-func NewDiscardPile() *DiscardPile {
-	return &DiscardPile{
+func newDiscardPile() *discardPile {
+	return &discardPile{
 		cards: []int{},
 	}
 }
 
-func (d *DiscardPile) AddCard(card int) error {
+func (d *discardPile) addCard(card int) error {
 	if !isValidCardValue(card) {
 		return fmt.Errorf("invalid card value: %d (must be between %d and %d)", card, MinCardValue, MaxCardValue)
 	}
@@ -20,12 +20,12 @@ func (d *DiscardPile) AddCard(card int) error {
 	return nil
 }
 
-func (d *DiscardPile) IsEmpty() bool {
+func (d *discardPile) isEmpty() bool {
 	return len(d.cards) == 0
 }
 
-func (d *DiscardPile) TakeTopCard() (int, error) {
-	if d.IsEmpty() {
+func (d *discardPile) takeTopCard() (int, error) {
+	if d.isEmpty() {
 		return HiddenCardValue, fmt.Errorf("discard pile is empty")
 	}
 	card := d.cards[len(d.cards)-1]
@@ -33,14 +33,14 @@ func (d *DiscardPile) TakeTopCard() (int, error) {
 	return card, nil
 }
 
-func (d *DiscardPile) TakeAllCards() []int {
+func (d *discardPile) takeAllCards() []int {
 	cards := d.cards
 	d.cards = []int{}
 	return cards
 }
 
-func (d *DiscardPile) GetTopCard() (int, error) {
-	if d.IsEmpty() {
+func (d *discardPile) getTopCard() (int, error) {
+	if d.isEmpty() {
 		return HiddenCardValue, fmt.Errorf("discard pile is empty")
 	}
 	return d.cards[len(d.cards)-1], nil

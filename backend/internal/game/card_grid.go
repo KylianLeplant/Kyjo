@@ -4,21 +4,21 @@ import (
 	"fmt"
 )
 
-// CardGrid stores card values and their discovery state by column and row.
-type CardGrid struct {
+// cardGrid stores card values and their discovery state by column and row.
+type cardGrid struct {
 	values     [][]int
 	discovered [][]bool
 }
 
-// NewCardGrid creates a card grid from a flat list of values.
-func NewCardGrid(values []int, nbCol int, nbRow int) (*CardGrid, error) {
+// newCardGrid creates a card grid from a flat list of values.
+func newCardGrid(values []int, nbCol int, nbRow int) (*cardGrid, error) {
 	if nbCol <= 0 || nbRow <= 0 {
 		return nil, fmt.Errorf("grid dimensions must be positive")
 	}
 	if len(values) != nbCol*nbRow {
 		return nil, fmt.Errorf("number of values does not match grid dimensions")
 	}
-	grid := &CardGrid{
+	grid := &cardGrid{
 		values:     make([][]int, nbCol),
 		discovered: make([][]bool, nbCol),
 	}
@@ -35,7 +35,7 @@ func NewCardGrid(values []int, nbCol int, nbRow int) (*CardGrid, error) {
 
 // GetGridState returns visible values and discovery flags as independent copies.
 // Hidden cards are represented by the value HiddenCardValue (13).
-func (cg *CardGrid) GetGridState() ([][]int, [][]bool) {
+func (cg *cardGrid) getGridState() ([][]int, [][]bool) {
 	valuesCopy := make([][]int, len(cg.values))
 	discoveredCopy := make([][]bool, len(cg.values))
 
@@ -54,8 +54,8 @@ func (cg *CardGrid) GetGridState() ([][]int, [][]bool) {
 	return valuesCopy, discoveredCopy
 }
 
-// Discover reveals a card and removes its column when it forms a match.
-func (cg *CardGrid) Discover(x int, y int) (bool, error) {
+// discoverCard reveals a card and removes its column when it forms a match.
+func (cg *cardGrid) discoverCard(x int, y int) (bool, error) {
 	if x < 0 || x >= len(cg.values) || y < 0 || y >= len(cg.values[x]) {
 		return false, fmt.Errorf("invalid card position (%d, %d)", x, y)
 	}
@@ -69,9 +69,9 @@ func (cg *CardGrid) Discover(x int, y int) (bool, error) {
 	return false, nil
 }
 
-// ReplaceCard changes a card value and marks the card as discovered.
+// replaceCard changes a card value and marks the card as discovered.
 // If the column forms a match after the replacement, it is removed.
-func (cg *CardGrid) ReplaceCard(x int, y int, newValue int) error {
+func (cg *cardGrid) replaceCard(x int, y int, newValue int) error {
 	if !isValidCardValue(newValue) {
 		return fmt.Errorf("invalid card value: %d (must be between %d and %d)", newValue, MinCardValue, MaxCardValue)
 	}
@@ -86,8 +86,8 @@ func (cg *CardGrid) ReplaceCard(x int, y int, newValue int) error {
 	return nil
 }
 
-// DiscoverAll reveals every card in the grid.
-func (cg *CardGrid) DiscoverAll() {
+// discoverAll reveals every card in the grid.
+func (cg *cardGrid) discoverAll() {
 	for i := range cg.values {
 		for j := range cg.values[i] {
 			cg.discovered[i][j] = true
@@ -96,7 +96,7 @@ func (cg *CardGrid) DiscoverAll() {
 }
 
 // checkColumnMatch reports whether every card in a column is discovered and equal.
-func (cg *CardGrid) checkColumnMatch(colIndex int) bool {
+func (cg *cardGrid) checkColumnMatch(colIndex int) bool {
 	for y := 0; y < len(cg.values[colIndex]); y++ {
 		if !cg.discovered[colIndex][y] {
 			return false
@@ -109,12 +109,12 @@ func (cg *CardGrid) checkColumnMatch(colIndex int) bool {
 }
 
 // deleteColumn removes a column after a successful match.
-func (cg *CardGrid) deleteColumn(colIndex int) {
+func (cg *cardGrid) deleteColumn(colIndex int) {
 	cg.values = append(cg.values[:colIndex], cg.values[colIndex+1:]...)
 	cg.discovered = append(cg.discovered[:colIndex], cg.discovered[colIndex+1:]...)
 }
 
-func (cg *CardGrid) printTestGrid() {
+func (cg *cardGrid) printTestGrid() {
 	if len(cg.values) == 0 {
 		return
 	}

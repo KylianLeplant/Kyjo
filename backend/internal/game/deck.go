@@ -5,12 +5,12 @@ import (
 	"math/rand"
 )
 
-type Deck struct {
+type deck struct {
 	cards []int
 }
 
-func NewDeck() *Deck {
-	deck := &Deck{
+func newDeck() *deck {
+	deck := &deck{
 		cards: make([]int, 150),
 	}
 	expectedCounts := map[int]int{
@@ -43,8 +43,8 @@ func NewDeck() *Deck {
 	return deck
 }
 
-func (d *Deck) DrawCard() (int, error) {
-	if d.IsEmpty() {
+func (d *deck) drawCard() (int, error) {
+	if d.isEmpty() {
 		return HiddenCardValue, fmt.Errorf("deck is empty")
 	}
 	card := d.cards[0]
@@ -52,11 +52,11 @@ func (d *Deck) DrawCard() (int, error) {
 	return card, nil
 }
 
-func (d *Deck) IsEmpty() bool {
+func (d *deck) isEmpty() bool {
 	return len(d.cards) == 0
 }
 
-func (d *Deck) DrawCards(n int) ([]int, error) {
+func (d *deck) drawCards(n int) ([]int, error) {
 	if n > len(d.cards) {
 		return nil, fmt.Errorf("not enough cards to draw: have %d, want %d", len(d.cards), n)
 	}
@@ -68,6 +68,6 @@ func (d *Deck) DrawCards(n int) ([]int, error) {
 	return drawnCards, nil
 }
 
-func (d *Deck) getNbCards() int {
+func (d *deck) getNbCards() int {
 	return len(d.cards)
 }

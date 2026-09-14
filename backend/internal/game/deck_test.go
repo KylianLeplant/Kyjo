@@ -3,7 +3,7 @@ package game
 import "testing"
 
 func TestNewDeck(t *testing.T) {
-	deck := NewDeck()
+	deck := newDeck()
 
 	if got := deck.getNbCards(); got != 150 {
 		t.Fatalf("NewDeck() contains %d cards, want 150", got)
@@ -40,9 +40,9 @@ func TestNewDeck(t *testing.T) {
 }
 
 func TestDeckDrawCard(t *testing.T) {
-	deck := NewDeck()
+	deck := newDeck()
 
-	card, err := deck.DrawCard()
+	card, err := deck.drawCard()
 	if card == HiddenCardValue {
 		t.Fatal("DrawCard() returned the empty-deck value")
 	}
@@ -58,9 +58,9 @@ func TestDeckDrawCard(t *testing.T) {
 }
 
 func TestDeckDrawCards(t *testing.T) {
-	deck := NewDeck()
+	deck := newDeck()
 
-	cards, err := deck.DrawCards(12)
+	cards, err := deck.drawCards(12)
 	if err != nil {
 		t.Fatalf("DrawCards(12) returned an error: %v", err)
 	}
@@ -81,17 +81,17 @@ func TestDeckDrawCards(t *testing.T) {
 }
 
 func TestEmptyDeck(t *testing.T) {
-	deck := &Deck{}
+	deck := &deck{}
 
-	if card, err := deck.DrawCard(); card != HiddenCardValue || err == nil {
+	if card, err := deck.drawCard(); card != HiddenCardValue || err == nil {
 		t.Fatalf("DrawCard() on an empty deck returned %d, want %d and an error", card, HiddenCardValue)
 	}
 }
 
 func TestDeckDrawCardsNotEnoughCards(t *testing.T) {
-	deck := &Deck{cards: []int{1, 2}}
+	deck := &deck{cards: []int{1, 2}}
 
-	_, err := deck.DrawCards(3)
+	_, err := deck.drawCards(3)
 	if err == nil {
 		t.Fatalf("DrawCards(3) should have returned an error")
 	}
@@ -102,9 +102,9 @@ func TestDeckDrawCardsNotEnoughCards(t *testing.T) {
 
 func TestDeckDrawCardsRejectsNonPositiveCount(t *testing.T) {
 	for _, count := range []int{0, -1} {
-		deck := NewDeck()
+		deck := newDeck()
 
-		if _, err := deck.DrawCards(count); err == nil {
+		if _, err := deck.drawCards(count); err == nil {
 			t.Fatalf("DrawCards(%d) returned no error", count)
 		}
 		if got := deck.getNbCards(); got != 150 {

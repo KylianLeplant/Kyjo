@@ -77,3 +77,32 @@ func TestPrintGridWritesToWriter(t *testing.T) {
 		t.Fatal("PrintGrid() wrote no output")
 	}
 }
+
+func TestGameCardActions(t *testing.T) {
+	game, err := NewGame(2)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	revealed, err := game.Discover(0, 0, 0)
+	if err != nil || !revealed {
+		t.Fatalf("Discover() returned (%t, %v), want (true, nil)", revealed, err)
+	}
+	if err := game.ReplaceCard(0, 0, 0, MinCardValue); err != nil {
+		t.Fatalf("ReplaceCard() returned an unexpected error: %v", err)
+	}
+}
+
+func TestGameCardActionsRejectInvalidPlayer(t *testing.T) {
+	game, err := NewGame(2)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := game.Discover(-1, 0, 0); err == nil {
+		t.Fatal("Discover() accepted an invalid player index")
+	}
+	if err := game.ReplaceCard(2, 0, 0, 1); err == nil {
+		t.Fatal("ReplaceCard() accepted an invalid player index")
+	}
+}

@@ -1,8 +1,10 @@
 package main
 
 import (
-	"backend/internal/game"
 	"fmt"
+	"os"
+
+	"backend/internal/game"
 )
 
 func main() {
@@ -12,6 +14,7 @@ func main() {
 		return
 	}
 	fmt.Println("Initial grid state for player 0:")
-	currentGame.PrintGrid(0)
-
+	if err := currentGame.PrintGrid(os.Stdout, 0); err != nil {
+		fmt.Println("Unable to print grid:", err)
+	}
 }

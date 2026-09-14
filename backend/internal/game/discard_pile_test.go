@@ -3,7 +3,7 @@ package game
 import "testing"
 
 func TestDiscardPile(t *testing.T) {
-	discard := NewDiscard()
+	discard := NewDiscardPile()
 	card, err := discard.TakeTopCard()
 	if card != HiddenCardValue {
 		t.Fatalf("TakeTopCard() on an empty pile returned %d, want %d", card, HiddenCardValue)
@@ -40,7 +40,7 @@ func TestDiscardPile(t *testing.T) {
 }
 
 func TestDiscardPileGetTopCard(t *testing.T) {
-	discard := NewDiscard()
+	discard := NewDiscardPile()
 
 	if _, err := discard.GetTopCard(); err == nil {
 		t.Fatal("GetTopCard() on an empty pile returned no error")
@@ -62,7 +62,7 @@ func TestDiscardPileGetTopCard(t *testing.T) {
 }
 
 func TestDiscardPileTakeAllCards(t *testing.T) {
-	discard := NewDiscard()
+	discard := NewDiscardPile()
 	for _, card := range []int{7, 3, 1} {
 		if err := discard.AddCard(card); err != nil {
 			t.Fatal(err)
@@ -83,7 +83,7 @@ func TestDiscardPileTakeAllCards(t *testing.T) {
 
 func TestDiscardPileRejectsInvalidCard(t *testing.T) {
 	for _, card := range []int{MinCardValue - 1, MaxCardValue + 1} {
-		discard := NewDiscard()
+		discard := NewDiscardPile()
 
 		if err := discard.AddCard(card); err == nil {
 			t.Fatalf("AddCard(%d) returned no error", card)

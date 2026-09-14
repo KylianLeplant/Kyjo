@@ -1,12 +1,15 @@
 package game
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+)
 
 const (
-	MinPlayerCount		= 2
-	MaxPlayerCount	 	= 8
-	CardGridWidth		= 4
-	CardGridHeight		= 3
+	MinPlayerCount = 2
+	MaxPlayerCount = 8
+	CardGridWidth  = 4
+	CardGridHeight = 3
 )
 
 func isValidPlayerCount(count int) bool {
@@ -26,7 +29,7 @@ func NewGame(nbPlayers int) (*Game, error) {
 	}
 	game := &Game{
 		deck:    NewDeck(),
-		discard: NewDiscard(),
+		discard: NewDiscardPile(),
 		grids:   make([]*CardGrid, nbPlayers),
 	}
 	for i := 0; i < nbPlayers; i++ {
@@ -59,19 +62,23 @@ func (g *Game) GetGridState(playerIndex int) ([][]int, [][]bool, error) {
 		return nil, nil, fmt.Errorf("invalid player index: %d", playerIndex)
 	}
 	values, discovered := g.grids[playerIndex].GetGridState()
-	return values, discovered, nil 
+	return values, discovered, nil
 }
 
-func (g *Game) PrintGrid(playerIndex int) error {
+func (g *Game) PrintGrid(w io.Writer, playerIndex int) error {
 	if playerIndex < 0 || playerIndex >= len(g.grids) {
 		return fmt.Errorf("invalid player index: %d", playerIndex)
 	}
 	values, _ := g.grids[playerIndex].GetGridState()
 	for i := 0; i < len(values); i++ {
 		for j := 0; j < len(values[i]); j++ {
-			print(values[i][j], " ")
+			if _, err := fmt.Fprint(w, values[i][j], " "); err != nil {
+				return err
+			}
 		}
-		println()
+		if _, err := fmt.Fprintln(w); err != nil {
+			return err
+		}
 	}
 	return nil
 }

@@ -8,23 +8,19 @@ import (
 type CardGrid struct {
 	values     [][]int
 	discovered [][]bool
-	nbCol      int
-	nbRow      int
 }
 
 // NewCardGrid creates a card grid from a flat list of values.
 func NewCardGrid(values []int, nbCol int, nbRow int) (*CardGrid, error) {
-	if len(values) != nbCol*nbRow {
-		return nil, fmt.Errorf("number of values does not match grid dimensions")
-	}
 	if nbCol <= 0 || nbRow <= 0 {
 		return nil, fmt.Errorf("grid dimensions must be positive")
+	}
+	if len(values) != nbCol*nbRow {
+		return nil, fmt.Errorf("number of values does not match grid dimensions")
 	}
 	grid := &CardGrid{
 		values:     make([][]int, nbCol),
 		discovered: make([][]bool, nbCol),
-		nbCol:      nbCol,
-		nbRow:      nbRow,
 	}
 	for i := 0; i < nbCol; i++ {
 		grid.values[i] = make([]int, nbRow)
@@ -92,8 +88,8 @@ func (cg *CardGrid) ReplaceCard(x int, y int, newValue int) error {
 
 // DiscoverAll reveals every card in the grid.
 func (cg *CardGrid) DiscoverAll() {
-	for i := 0; i < cg.nbCol; i++ {
-		for j := 0; j < cg.nbRow; j++ {
+	for i := range cg.values {
+		for j := range cg.values[i] {
 			cg.discovered[i][j] = true
 		}
 	}
@@ -112,23 +108,25 @@ func (cg *CardGrid) checkColumnMatch(colIndex int) bool {
 	return true
 }
 
-// deleteColumn duplicates the column values after a successful match.
+// deleteColumn removes a column after a successful match.
 func (cg *CardGrid) deleteColumn(colIndex int) {
-	cg.nbCol--
 	cg.values = append(cg.values[:colIndex], cg.values[colIndex+1:]...)
 	cg.discovered = append(cg.discovered[:colIndex], cg.discovered[colIndex+1:]...)
 }
 
 func (cg *CardGrid) printTestGrid() {
-	for i := 0; i < cg.nbRow; i++ {
-		for j := 0; j < cg.nbCol; j++ {
+	if len(cg.values) == 0 {
+		return
+	}
+	for i := 0; i < len(cg.values[0]); i++ {
+		for j := range cg.values {
 			fmt.Printf("%d ", cg.values[j][i])
 		}
 		fmt.Println()
 	}
 	fmt.Println()
-	for i := 0; i < cg.nbRow; i++ {
-		for j := 0; j < cg.nbCol; j++ {
+	for i := 0; i < len(cg.discovered[0]); i++ {
+		for j := range cg.discovered {
 			fmt.Printf("%t ", cg.discovered[j][i])
 		}
 		fmt.Println()

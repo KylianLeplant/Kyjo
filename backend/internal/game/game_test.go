@@ -1,6 +1,9 @@
 package game
 
-import "testing"
+import (
+	"bytes"
+	"testing"
+)
 
 func TestNewGame(t *testing.T) {
 	game, err := NewGame(2)
@@ -57,5 +60,20 @@ func TestNewGameRejectsInvalidPlayerCount(t *testing.T) {
 		if game != nil {
 			t.Fatalf("NewGame(%d) returned a game with an error", players)
 		}
+	}
+}
+
+func TestPrintGridWritesToWriter(t *testing.T) {
+	game, err := NewGame(2)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var output bytes.Buffer
+	if err := game.PrintGrid(&output, 0); err != nil {
+		t.Fatalf("PrintGrid() returned an unexpected error: %v", err)
+	}
+	if output.Len() == 0 {
+		t.Fatal("PrintGrid() wrote no output")
 	}
 }

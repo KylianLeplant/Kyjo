@@ -5,7 +5,6 @@ import (
 	"math/rand"
 )
 
-
 type Deck struct {
 	cards []int
 }

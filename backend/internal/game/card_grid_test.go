@@ -149,14 +149,14 @@ func TestCardGridDeleteColumn(t *testing.T) {
 	if err := grid.ReplaceCard(0, 1, 1); err != nil {
 		t.Fatal(err)
 	}
-	if grid.nbCol == 3 {
+	if len(grid.values) == 3 {
 		t.Fatalf("deletion not expected if all cards are not discovered")
 	}
 	if _, err := grid.Discover(0, 0); err != nil {
 		t.Fatal(err)
 	}
-	if grid.nbCol != 3 {
-		t.Fatalf("deletion expected after discovering the last card of a column if they are the same %d", grid.nbCol)
+	if len(grid.values) != 3 {
+		t.Fatalf("deletion expected after discovering the last card of a column if they are the same %d", len(grid.values))
 	}
 
 	if _, err := grid.Discover(0, 0); err != nil {
@@ -165,7 +165,7 @@ func TestCardGridDeleteColumn(t *testing.T) {
 	if err := grid.ReplaceCard(0, 1, 3); err != nil {
 		t.Fatal(err)
 	}
-	if grid.nbCol != 2 {
+	if len(grid.values) != 2 {
 		t.Fatalf("deletion expected after replacing the last card of a column if they are the same")
 	}
 
@@ -175,7 +175,7 @@ func TestCardGridDeleteColumn(t *testing.T) {
 	if err := grid.ReplaceCard(0, 1, 3); err != nil {
 		t.Fatal(err)
 	}
-	if grid.nbCol == 1 {
+	if len(grid.values) == 1 {
 		t.Fatalf("deletion not expected when we replace the last card of a column if all cards of the column are not the same")
 	}
 
@@ -185,7 +185,7 @@ func TestCardGridDeleteColumn(t *testing.T) {
 	if _, err := grid.Discover(1, 0); err != nil {
 		t.Fatal(err)
 	}
-	if grid.nbCol == 1 {
+	if len(grid.values) == 1 {
 		t.Fatalf("deletion not expected when we discover the last card of a column if all cards of the column are not the same")
 	}
 }

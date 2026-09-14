@@ -31,9 +31,12 @@ func TestNewDeck(t *testing.T) {
 func TestDeckDrawCard(t *testing.T) {
 	deck := NewDeck()
 
-	card := deck.DrawCard()
+	card, err := deck.DrawCard()
 	if card == 13 {
 		t.Fatal("DrawCard() returned the empty-deck value")
+	}
+	if err != nil {
+		t.Fatalf("DrawCard() returned an error: %v", err)
 	}
 	if card < -2 || card > 12 {
 		t.Fatalf("DrawCard() returned an invalid card value: %d", card)
@@ -46,7 +49,10 @@ func TestDeckDrawCard(t *testing.T) {
 func TestDeckDrawCards(t *testing.T) {
 	deck := NewDeck()
 
-	cards := deck.DrawCards(12)
+	cards, err := deck.DrawCards(12)
+	if err != nil {
+		t.Fatalf("DrawCards(12) returned an error: %v", err)
+	}
 	if len(cards) != 12 {
 		t.Fatalf("DrawCards(12) returned %d cards, want 12", len(cards))
 	}
@@ -65,18 +71,18 @@ func TestDeckDrawCards(t *testing.T) {
 
 func TestEmptyDeck(t *testing.T) {
 	deck := &Deck{}
-
-	if card := deck.DrawCard(); card != 13 {
-		t.Fatalf("DrawCard() on an empty deck returned %d, want 13", card)
+	
+	if card, err := deck.DrawCard(); card != 13 || err == nil {
+		t.Fatalf("DrawCard() on an empty deck returned %d, want 13 and an error", card)
 	}
 }
 
 func TestDeckDrawCardsNotEnoughCards(t *testing.T) {
 	deck := &Deck{cards: []int{1, 2}}
 
-	cards := deck.DrawCards(3)
-	if cards != nil {
-		t.Fatalf("DrawCards(3) returned %v, want nil", cards)
+	_, err := deck.DrawCards(3)
+	if err == nil {
+		t.Fatalf("DrawCards(3) should have returned an error")
 	}
 	if got := deck.getNbCards(); got != 2 {
 		t.Fatalf("deck contains %d cards after a failed draw, want 2", got)

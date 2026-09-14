@@ -2,6 +2,7 @@ package game
 
 import (
 	"math/rand"
+	"fmt"
 )
 
 type Deck struct {
@@ -30,26 +31,26 @@ func NewDeck() *Deck {
 	return deck
 }
 
-func (d *Deck) DrawCard() int {
+func (d *Deck) DrawCard() (int, error) {
 	if d.IsEmpty() {
-		return 13 // 13 indicates that the deck is empty
+		return 13, fmt.Errorf("deck is empty")
 	}
 	card := d.cards[0]
 	d.cards = d.cards[1:]
-	return card
+	return card, nil
 }
 
 func (d *Deck) IsEmpty() bool {
 	return len(d.cards) == 0
 }
 
-func (d *Deck) DrawCards(n int) []int {
+func (d *Deck) DrawCards(n int) ([]int, error) {
 	if n > len(d.cards) {
-		return nil // Not enough cards to draw
+		return nil, fmt.Errorf("not enough cards to draw: have %d, want %d", len(d.cards), n)
 	}
 	drawnCards := d.cards[:n]
 	d.cards = d.cards[n:]
-	return drawnCards
+	return drawnCards, nil
 }
 
 func (d *Deck) getNbCards() int {

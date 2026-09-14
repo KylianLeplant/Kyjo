@@ -6,9 +6,12 @@ import (
 )
 
 func main() {
-	game := game.NewGame(2)
+	currentGame, err := game.NewGame(2)
+	if err != nil {
+		fmt.Println("Unable to create game:", err)
+		return
+	}
 	fmt.Println("Initial grid state for player 0:")
-	game.PrintGrid(0)
-
+	currentGame.PrintGrid(0)
 
 }

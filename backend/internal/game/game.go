@@ -90,8 +90,8 @@ func (g *Game) PrintGrid(w io.Writer, playerIndex int) error {
 		return err
 	}
 	values, _ := grid.getGridState()
-	for i := 0; i < len(values); i++ {
-		for j := 0; j < len(values[i]); j++ {
+	for j := 0; j < len(values[0]); j++ {
+		for i := 0; i < len(values); i++ {
 			if _, err := fmt.Fprint(w, values[i][j], " "); err != nil {
 				return err
 			}
@@ -148,6 +148,28 @@ func (g *Game) DrawCard(player int) (int, error) {
 	return card, nil
 }
 
+func (g *Game) TakeDiscardCard(player int) (int, error) {
+	if g.pendingTurn == nil {
+		return HiddenCardValue, fmt.Errorf("no pending turn")
+	}
+	if player != g.pendingTurn.playerIndex {
+		return HiddenCardValue, fmt.Errorf("it's not player %d's turn", player)
+	}
+	if g.pendingTurn.phase != PhaseReady {
+		return HiddenCardValue, fmt.Errorf("not in the right phase to take a discard card")
+	}
+	card, err := g.discard.takeTopCard()
+	if err != nil {
+		return HiddenCardValue, err
+	}
+	g.pendingTurn = &pendingTurn{
+		playerIndex: player,
+		drawnCard:   card,
+		phase:       PhaseAwaitingDrawDecision,
+	}
+	return card, nil
+}
+
 func (g *Game) DiscardCard(player int) error {
 	if g.pendingTurn == nil {
 		return fmt.Errorf("Error : no pending turn")
@@ -180,7 +202,11 @@ func (g *Game) ReplaceCard(player int, x int, y int) error {
 	if err != nil {
 		return err
 	}
-	err = grid.replaceCard(x, y, g.pendingTurn.drawnCard)
+	lastCard, err := grid.replaceCard(x, y, g.pendingTurn.drawnCard)
+	if err != nil {
+		return err
+	}
+	err = g.discard.addCard(lastCard)
 	if err != nil {
 		return err
 	}

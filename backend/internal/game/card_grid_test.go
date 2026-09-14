@@ -48,7 +48,7 @@ func TestCardGridReplaceCard(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := grid.replaceCard(1, 0, 9); err != nil {
+	if _, err := grid.replaceCard(1, 0, 9); err != nil {
 		t.Fatal(err)
 	}
 	values, discovered := grid.getGridState()
@@ -100,7 +100,7 @@ func TestCardGridReplaceCardRejectsInvalidIndices(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if err := grid.replaceCard(test.x, test.y, 9); err == nil {
+			if _, err := grid.replaceCard(test.x, test.y, 9); err == nil {
 				t.Fatal("expected an error")
 			}
 		})
@@ -114,7 +114,7 @@ func TestCardGridReplaceCardRejectsInvalidValue(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := grid.replaceCard(0, 0, value); err == nil {
+		if _, err := grid.replaceCard(0, 0, value); err == nil {
 			t.Fatalf("ReplaceCard() accepted invalid value %d", value)
 		}
 		values, discovered := grid.getGridState()
@@ -146,7 +146,7 @@ func TestCardGridDeleteColumn(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := grid.replaceCard(0, 1, 1); err != nil {
+	if _, err := grid.replaceCard(0, 1, 1); err != nil {
 		t.Fatal(err)
 	}
 	if len(grid.values) == 3 {
@@ -162,7 +162,7 @@ func TestCardGridDeleteColumn(t *testing.T) {
 	if _, err := grid.discoverCard(0, 0); err != nil {
 		t.Fatal(err)
 	}
-	if err := grid.replaceCard(0, 1, 3); err != nil {
+	if _, err := grid.replaceCard(0, 1, 3); err != nil {
 		t.Fatal(err)
 	}
 	if len(grid.values) != 2 {
@@ -172,14 +172,14 @@ func TestCardGridDeleteColumn(t *testing.T) {
 	if _, err := grid.discoverCard(0, 0); err != nil {
 		t.Fatal(err)
 	}
-	if err := grid.replaceCard(0, 1, 3); err != nil {
+	if _, err := grid.replaceCard(0, 1, 3); err != nil {
 		t.Fatal(err)
 	}
 	if len(grid.values) == 1 {
 		t.Fatalf("deletion not expected when we replace the last card of a column if all cards of the column are not the same")
 	}
 
-	if err := grid.replaceCard(1, 1, 3); err != nil {
+	if _, err := grid.replaceCard(1, 1, 3); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := grid.discoverCard(1, 0); err != nil {

@@ -71,19 +71,20 @@ func (cg *cardGrid) discoverCard(x int, y int) (bool, error) {
 
 // replaceCard changes a card value and marks the card as discovered.
 // If the column forms a match after the replacement, it is removed.
-func (cg *cardGrid) replaceCard(x int, y int, newValue int) error {
+func (cg *cardGrid) replaceCard(x int, y int, newValue int) (int, error) {
 	if !isValidCardValue(newValue) {
-		return fmt.Errorf("invalid card value: %d (must be between %d and %d)", newValue, MinCardValue, MaxCardValue)
+		return HiddenCardValue, fmt.Errorf("invalid card value: %d (must be between %d and %d)", newValue, MinCardValue, MaxCardValue)
 	}
 	if x < 0 || x >= len(cg.values) || y < 0 || y >= len(cg.values[x]) {
-		return fmt.Errorf("invalid card position (%d, %d)", x, y)
+		return HiddenCardValue, fmt.Errorf("invalid card position (%d, %d)", x, y)
 	}
+	lastValue := cg.values[x][y]
 	cg.values[x][y] = newValue
 	cg.discovered[x][y] = true
 	if cg.checkColumnMatch(x) {
 		cg.deleteColumn(x)
 	}
-	return nil
+	return lastValue, nil
 }
 
 // discoverAll reveals every card in the grid.

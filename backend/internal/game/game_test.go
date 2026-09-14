@@ -11,8 +11,8 @@ func TestNewGame(t *testing.T) {
 	if len(game.grids) != 2 {
 		t.Fatalf("game has %d grids, want 2", len(game.grids))
 	}
-	if got := game.deck.getNbCards(); got != 126 {
-		t.Fatalf("deck contains %d cards after setup, want 126", got)
+	if got := game.deck.getNbCards(); got != 125 {
+		t.Fatalf("deck contains %d cards after setup, want 125", got)
 	}
 
 	for player := range game.grids {

@@ -49,7 +49,7 @@ func TestDeckDrawCard(t *testing.T) {
 	if err != nil {
 		t.Fatalf("DrawCard() returned an error: %v", err)
 	}
-	if card < MinCardValue|| card > MaxCardValue {
+	if card < MinCardValue || card > MaxCardValue {
 		t.Fatalf("DrawCard() returned an invalid card value: %d", card)
 	}
 	if got := deck.getNbCards(); got != 149 {
@@ -97,5 +97,18 @@ func TestDeckDrawCardsNotEnoughCards(t *testing.T) {
 	}
 	if got := deck.getNbCards(); got != 2 {
 		t.Fatalf("deck contains %d cards after a failed draw, want 2", got)
+	}
+}
+
+func TestDeckDrawCardsRejectsNonPositiveCount(t *testing.T) {
+	for _, count := range []int{0, -1} {
+		deck := NewDeck()
+
+		if _, err := deck.DrawCards(count); err == nil {
+			t.Fatalf("DrawCards(%d) returned no error", count)
+		}
+		if got := deck.getNbCards(); got != 150 {
+			t.Fatalf("deck contains %d cards after DrawCards(%d), want 150", got, count)
+		}
 	}
 }

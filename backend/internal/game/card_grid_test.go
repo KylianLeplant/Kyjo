@@ -107,6 +107,23 @@ func TestCardGridReplaceCardRejectsInvalidIndices(t *testing.T) {
 	}
 }
 
+func TestCardGridReplaceCardRejectsInvalidValue(t *testing.T) {
+	for _, value := range []int{MinCardValue - 1, MaxCardValue + 1} {
+		grid, err := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := grid.ReplaceCard(0, 0, value); err == nil {
+			t.Fatalf("ReplaceCard() accepted invalid value %d", value)
+		}
+		values, discovered := grid.GetGridState()
+		if values[0][0] != HiddenCardValue || discovered[0][0] {
+			t.Fatalf("invalid replacement changed card state to (%d, %t)", values[0][0], discovered[0][0])
+		}
+	}
+}
+
 func TestCardGridDiscoverAll(t *testing.T) {
 	grid, err := NewCardGrid([]int{1, 2, 3, 4}, 2, 2)
 	if err != nil {

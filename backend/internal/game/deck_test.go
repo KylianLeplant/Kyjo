@@ -112,3 +112,115 @@ func TestDeckDrawCardsRejectsNonPositiveCount(t *testing.T) {
 		}
 	}
 }
+
+func TestDeckIsEmpty(t *testing.T) {
+	deck := newDeck()
+
+	if deck.isEmpty() {
+		t.Fatal("NewDeck() returned an empty deck")
+	}
+
+	// Draw all cards
+	for i := 0; i < 150; i++ {
+		if _, err := deck.drawCard(); err != nil {
+			t.Fatalf("DrawCard() returned an error on draw %d: %v", i, err)
+		}
+	}
+
+	if !deck.isEmpty() {
+		t.Fatal("Deck should be empty after drawing all cards")
+	}
+}
+
+func TestDeckGetNbCards(t *testing.T) {
+	deck := newDeck()
+
+	if got := deck.getNbCards(); got != 150 {
+		t.Fatalf("NewDeck() contains %d cards, want 150", got)
+	}
+
+	// Draw some cards
+	for i := 0; i < 10; i++ {
+		if _, err := deck.drawCard(); err != nil {
+			t.Fatalf("DrawCard() returned an error on draw %d: %v", i, err)
+		}
+	}
+
+	if got := deck.getNbCards(); got != 140 {
+		t.Fatalf("Deck contains %d cards after drawing 10, want 140", got)
+	}
+}
+
+func TestDeckShufflePreservesCards(t *testing.T) {
+	deck := newDeck()
+
+	originalCounts := make(map[int]int)
+	for _, card := range deck.cards {
+		originalCounts[card]++
+	}
+
+	deck.shuffle()
+
+	if got := deck.getNbCards(); got != 150 {
+		t.Fatalf("Shuffle() changed the number of cards to %d, want 150", got)
+	}
+
+	shuffledCounts := make(map[int]int)
+	for _, card := range deck.cards {
+		shuffledCounts[card]++
+	}
+
+	expectedCounts := map[int]int{
+		-2: 5,
+		-1: 10,
+		0:  15,
+		1:  10,
+		2:  10,
+		3:  10,
+		4:  10,
+		5:  10,
+		6:  10,
+		7:  10,
+		8:  10,
+		9:  10,
+		10: 10,
+		11: 10,
+		12: 10,
+	}
+
+	for card, want := range expectedCounts {
+		if got := shuffledCounts[card]; got != want {
+			t.Errorf("Shuffle() produced %d cards with value %d, want %d", got, card, want)
+		}
+	}
+
+	for card, want := range originalCounts {
+		if got := shuffledCounts[card]; got != want {
+			t.Errorf("Shuffle() changed count for card %d from %d to %d", card, want, got)
+		}
+	}
+}
+
+func TestDeckShuffleDoesNotPanicOnEmptyDeck(t *testing.T) {
+	deck := &deck{}
+
+	deck.shuffle()
+
+	if got := deck.getNbCards(); got != 0 {
+		t.Fatalf("Shuffle() on empty deck produced %d cards, want 0", got)
+	}
+}
+
+func TestDeckShuffleDoesNotPanicOnSingleCard(t *testing.T) {
+	deck := &deck{cards: []int{7}}
+
+	deck.shuffle()
+
+	if got := deck.getNbCards(); got != 1 {
+		t.Fatalf("Shuffle() on single-card deck produced %d cards, want 1", got)
+	}
+	if deck.cards[0] != 7 {
+		t.Fatalf("Shuffle() on single-card deck changed the card value to %d, want 7", deck.cards[0])
+	}
+}
+

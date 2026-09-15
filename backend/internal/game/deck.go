@@ -37,9 +37,7 @@ func newDeck() *deck {
 			index++
 		}
 	}
-	rand.Shuffle(len(deck.cards), func(i, j int) {
-		deck.cards[i], deck.cards[j] = deck.cards[j], deck.cards[i]
-	})
+	deck.shuffle()
 	return deck
 }
 
@@ -70,4 +68,10 @@ func (d *deck) drawCards(n int) ([]int, error) {
 
 func (d *deck) getNbCards() int {
 	return len(d.cards)
+}
+
+func (d *deck) shuffle() {
+	rand.Shuffle(len(d.cards), func(i, j int) {
+		d.cards[i], d.cards[j] = d.cards[j], d.cards[i]
+	})
 }

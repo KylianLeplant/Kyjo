@@ -20,3 +20,13 @@ HOSTS, 0N PLAYER, 11 LOBBY : assigned_at
 :
 
 PARTICIPATES_IN, 0N PLAYER, 0N LOBBY: role, status, joined_at, exit_at
+
+:
+
+HOSTS_GAME, 11 LOBBY, 0N GAME
+GAME: game_id, status, started_at, finished_at
+WINS, 01 PLAYER, 0N GAME
+
+:
+
+PARTICIPATES_IN_GAME, 0N PLAYER, 0N GAME: player_index, final_score, has_quit, replaced_by_ai

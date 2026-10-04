@@ -26,5 +26,7 @@ func AutoMigrate(db *gorm.DB) error {
 		&models.Session{},
 		&models.Lobby{},
 		&models.LobbyParticipant{},
+		&models.Game{},
+		&models.GameParticipant{},
 	)
 }

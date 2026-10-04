@@ -8,14 +8,16 @@ import (
 
 // Player represents a user of the application, whether registered or guest.
 type Player struct {
-	PlayerID     uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
-	Username     string    `gorm:"uniqueIndex;not null"`
-	ProfilePhoto string
-	AccountID    *uuid.UUID
-	Account      *Account `gorm:"foreignKey:AccountID;constraint:OnDelete:CASCADE;"`
-	Sessions     []Session
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	PlayerID        uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
+	Username        string    `gorm:"uniqueIndex;not null"`
+	ProfilePhoto    string
+	AccountID       *uuid.UUID
+	Account         *Account `gorm:"foreignKey:AccountID;constraint:OnDelete:CASCADE;"`
+	Sessions        []Session
+	GameParticipants []GameParticipant
+	WonGames        []Game `gorm:"foreignKey:WinnerID"`
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
 }
 
 // Account represents the registered credentials of a player.
@@ -95,4 +97,37 @@ type LobbyParticipant struct {
 // TableName overrides the table name for LobbyParticipant.
 func (LobbyParticipant) TableName() string {
 	return "lobby_participants"
+}
+
+// Game represents a single played game inside a lobby.
+type Game struct {
+	GameID     uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
+	LobbyID    uuid.UUID `gorm:"not null"`
+	Lobby      *Lobby    `gorm:"foreignKey:LobbyID;constraint:OnDelete:CASCADE;"`
+	Status     string    `gorm:"not null;default:'waiting'"`
+	StartedAt  *time.Time
+	FinishedAt *time.Time
+	WinnerID   *uuid.UUID
+	Winner     *Player `gorm:"foreignKey:WinnerID;constraint:OnDelete:SET NULL;"`
+	Participants []GameParticipant
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+}
+
+// GameParticipant links a player to a specific game.
+type GameParticipant struct {
+	GameParticipantID uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
+	GameID            uuid.UUID `gorm:"not null"`
+	Game              *Game     `gorm:"foreignKey:GameID;constraint:OnDelete:CASCADE;"`
+	PlayerID          uuid.UUID `gorm:"not null"`
+	Player            *Player   `gorm:"foreignKey:PlayerID;constraint:OnDelete:CASCADE;"`
+	PlayerIndex       int       `gorm:"not null"`
+	FinalScore        *int
+	HasQuit           bool `gorm:"default:false"`
+	ReplacedByAI      bool `gorm:"default:false"`
+}
+
+// TableName overrides the table name for GameParticipant.
+func (GameParticipant) TableName() string {
+	return "game_participants"
 }

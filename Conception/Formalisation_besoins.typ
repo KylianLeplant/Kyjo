@@ -84,25 +84,25 @@ Le projet couvre les fonctionnalités suivantes :
 
 === Gestion de la partie
 
-- *BF-22* : Le système doit distribuer automatiquement les cartes au début de
+- *BF-26* : Le système doit distribuer automatiquement les cartes au début de
   la partie.
-- *BF-23* : Le système doit appliquer les règles du Skyjo définies dans la
+- *BF-27* : Le système doit appliquer les règles du Skyjo définies dans la
   section "Règles métier du jeu".
-- *BF-24* : Le système doit synchroniser l'état de la partie entre les joueurs.
-- *BF-25* : Le système doit gérer la déconnexion d'un joueur pendant une
+- *BF-28* : Le système doit synchroniser l'état de la partie entre les joueurs.
+- *BF-29* : Le système doit gérer la déconnexion d'un joueur pendant une
   partie.
-- *BF-26* : Le système doit permettre à un joueur de quitter une partie en cours,
+- *BF-30* : Le système doit permettre à un joueur de quitter une partie en cours,
   auquel cas il est remplacé par une IA si nécessaire.
 
 === Pages principales
-- *BF-27* : Le système doit proposer une page d'accueil présentant le jeu et
+- *BF-31* : Le système doit proposer une page d'accueil présentant le jeu et
   permettant de se connecter, de créer un compte ou de continuer en tant qu'invité.
-- *BF-28* : Le système doit proposer une page de profil permettant à un joueur
+- *BF-32* : Le système doit proposer une page de profil permettant à un joueur
   inscrit de modifier ses informations personnelles.
-- *BF-29* : Après s'être connecté ou avoir continué en tant qu'invité, le système doit proposer un menu principal permettant de créer ou rejoindre un lobby.
-- *BF-30* : Le système doit proposer une page de lobby permettant aux joueurs de voir les autres joueurs et spectateurs, de communiquer via la messagerie interne et de lancer la partie.
-- *BF-31* : Le système doit proposer une page permettant de voir la liste des lobbys publics et de les rejoindre.
-- *BF-32* : Le système doit proposer une page de jeu.
+- *BF-33* : Après s'être connecté ou avoir continué en tant qu'invité, le système doit proposer un menu principal permettant de créer ou rejoindre un lobby.
+- *BF-34* : Le système doit proposer une page de lobby permettant aux joueurs de voir les autres joueurs et spectateurs, de communiquer via la messagerie interne et de lancer la partie.
+- *BF-35* : Le système doit proposer une page permettant de voir la liste des lobbys publics et de les rejoindre.
+- *BF-36* : Le système doit proposer une page de jeu.
 
 == Besoins non fonctionnels
 

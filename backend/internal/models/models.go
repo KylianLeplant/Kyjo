@@ -11,8 +11,6 @@ type Player struct {
 	PlayerID        uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
 	Username        string    `gorm:"uniqueIndex;not null"`
 	ProfilePhoto    string
-	AccountID       *uuid.UUID
-	Account         *Account `gorm:"foreignKey:AccountID;constraint:OnDelete:CASCADE;"`
 	Sessions        []Session
 	GameParticipants []GameParticipant
 	WonGames        []Game `gorm:"foreignKey:WinnerID"`
@@ -24,7 +22,6 @@ type Player struct {
 type Account struct {
 	AccountID       uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
 	Email           string    `gorm:"uniqueIndex;not null"`
-	PasswordHash    *string
 	EmailVerifiedAt *time.Time
 	PlayerID        uuid.UUID `gorm:"uniqueIndex;not null"`
 	Player          *Player   `gorm:"foreignKey:PlayerID;constraint:OnDelete:CASCADE;"`
